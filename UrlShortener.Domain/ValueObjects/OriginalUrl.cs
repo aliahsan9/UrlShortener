@@ -1,0 +1,46 @@
+namespace UrlShortener.Domain.ValueObjects;
+
+public sealed class OriginalUrl
+{
+    public string Value { get; }
+
+    private OriginalUrl(string value)
+    {
+        Value = value;
+    }
+
+    public static OriginalUrl Create(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            throw new ArgumentException(
+                "Original URL cannot be empty.",
+                nameof(value));
+        }
+
+        if (!Uri.TryCreate(
+                value,
+                UriKind.Absolute,
+                out var uri))
+        {
+            throw new ArgumentException(
+                "Original URL must be a valid absolute URL.",
+                nameof(value));
+        }
+
+        if (uri.Scheme != Uri.UriSchemeHttp &&
+            uri.Scheme != Uri.UriSchemeHttps)
+        {
+            throw new ArgumentException(
+                "Original URL must use HTTP or HTTPS.",
+                nameof(value));
+        }
+
+        return new OriginalUrl(value);
+    }
+
+    public override string ToString()
+    {
+        return Value;
+    }
+}
