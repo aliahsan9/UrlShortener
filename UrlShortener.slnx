@@ -1,0 +1,15 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path="Directory.Build.props" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="UrlShortener.Api/UrlShortener.Api.csproj" />
+    <Project Path="UrlShortener.Application/UrlShortener.Application.csproj" />
+    <Project Path="UrlShortener.Domain/UrlShortener.Domain.csproj" />
+    <Project Path="UrlShortener.Infrastructure/UrlShortener.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="UrlShortener.Tests/UrlShortener.Tests.csproj" />
+  </Folder>
+</Solution>
