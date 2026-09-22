@@ -26,6 +26,7 @@ public class UrlMappingTests
         Assert.True(mapping.IsActive);
         Assert.Null(mapping.ExpiresAtUtc);
     }
+
     [Fact]
     public void Create_WithPastExpiration_ShouldThrowException()
     {
@@ -49,6 +50,7 @@ public class UrlMappingTests
         // Assert
         Assert.Throws<ArgumentException>(action);
     }
+
     [Fact]
     public void Create_WithFutureExpiration_ShouldCreateMapping()
     {
@@ -72,6 +74,7 @@ public class UrlMappingTests
         // Assert
         Assert.Equal(expiration, mapping.ExpiresAtUtc);
     }
+
     [Fact]
     public void IsExpired_WhenExpirationHasPassed_ShouldReturnTrue()
     {
@@ -101,6 +104,7 @@ public class UrlMappingTests
         // Assert
         Assert.True(result);
     }
+
     [Fact]
     public void IsExpired_WhenExpirationHasNotPassed_ShouldReturnFalse()
     {
@@ -130,6 +134,7 @@ public class UrlMappingTests
         // Assert
         Assert.False(result);
     }
+
     [Fact]
     public void Deactivate_ShouldSetIsActiveToFalse()
     {
