@@ -55,4 +55,29 @@ public class ShortCodeTests
         // Assert
         Assert.Throws<ArgumentException>(action);
     }
+    [Fact]
+    public void Create_WithBase62Characters_ShouldCreateShortCode()
+    {
+        // Arrange
+        var value = "aZ09x1";
+
+        // Act
+        var shortCode = ShortCode.Create(value);
+
+        // Assert
+        Assert.Equal(value, shortCode.Value);
+    }
+    [Fact]
+    public void Create_WithNonAsciiCharacter_ShouldThrowException()
+    {
+        // Arrange
+        var value = "abc12é";
+
+        // Act
+        var action = () => ShortCode.Create(value);
+
+        // Assert
+        Assert.Throws<ArgumentException>(action);
+
+    }
 }
