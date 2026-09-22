@@ -1,3 +1,4 @@
+using FluentValidation;
 using UrlShortener.Application.Abstractions.Repositories;
 using UrlShortener.Application.Abstractions.Services;
 using UrlShortener.Domain.Entities;
@@ -8,19 +9,26 @@ public sealed class CreateShortUrlHandler
 {
     private readonly IUrlMappingRepository _urlMappingRepository;
     private readonly IShortCodeGenerator _shortCodeGenerator;
+    private readonly IValidator<CreateShortUrlRequest> _validator;
 
     public CreateShortUrlHandler(
         IUrlMappingRepository urlMappingRepository,
-        IShortCodeGenerator shortCodeGenerator)
+        IShortCodeGenerator shortCodeGenerator,
+        IValidator<CreateShortUrlRequest> validator)
     {
         _urlMappingRepository = urlMappingRepository;
         _shortCodeGenerator = shortCodeGenerator;
+        _validator = validator;
     }
 
     public async Task<CreateShortUrlResult> HandleAsync(
         CreateShortUrlRequest request,
         CancellationToken cancellationToken)
     {
+        await _validator.ValidateAndThrowAsync(
+            request,
+            cancellationToken);
+
         var shortCode = _shortCodeGenerator.Generate();
 
         while (await _urlMappingRepository.ExistsByShortCodeAsync(
