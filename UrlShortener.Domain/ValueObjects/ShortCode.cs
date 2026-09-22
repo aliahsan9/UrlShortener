@@ -4,6 +4,11 @@ public sealed class ShortCode
 {
     private const int RequiredLength = 6;
 
+    private const string AllowedCharacters =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ" +
+        "abcdefghijklmnopqrstuvwxyz" +
+        "0123456789";
+
     public string Value { get; }
 
     private ShortCode(string value)
@@ -27,7 +32,7 @@ public sealed class ShortCode
                 nameof(value));
         }
 
-        if (!value.All(char.IsLetterOrDigit))
+        if (value.Any(character => !AllowedCharacters.Contains(character)))
         {
             throw new ArgumentException(
                 "Short code can contain only letters and digits.",
