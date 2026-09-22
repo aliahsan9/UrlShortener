@@ -16,4 +16,43 @@ public class ShortCodeTests
         // Assert
         Assert.Equal(value, shortCode.Value);
     }
+
+    [Fact]
+    public void Create_WithEmptyValue_ShouldThrowException()
+    {
+        // Arrange
+        var value = "";
+
+        // Act
+        var action = () => ShortCode.Create(value);
+
+        // Assert
+        Assert.Throws<ArgumentException>(action);
+    }
+
+    [Fact]
+    public void Create_WithIncorrectLength_ShouldThrowException()
+    {
+        // Arrange
+        var value = "abc";
+
+        // Act
+        var action = () => ShortCode.Create(value);
+
+        // Assert
+        Assert.Throws<ArgumentException>(action);
+    }
+
+    [Fact]
+    public void Create_WithSpecialCharacters_ShouldThrowException()
+    {
+        // Arrange
+        var value = "abc-12";
+
+        // Act
+        var action = () => ShortCode.Create(value);
+
+        // Assert
+        Assert.Throws<ArgumentException>(action);
+    }
 }
