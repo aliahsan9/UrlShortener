@@ -1,53 +1,61 @@
-using FluentValidation;
-using UrlShortener.Application.Abstractions.Repositories;
-using UrlShortener.Application.Abstractions.Services;
+using MediatR;
+using ShortUrl.Application.Common.Interfaces;
+using ShortUrl.Domain.Entities;
 using UrlShortener.Domain.Entities;
 
-namespace UrlShortener.Application.Features.UrlMappings.CreateShortUrl;
+namespace ShortUrl.Application.Features.UrlMappings.CreateShortUrl;
 
 public sealed class CreateShortUrlHandler
+    : IRequestHandler<CreateShortUrlCommand, CreateShortUrlResponse>
 {
-    private readonly IUrlMappingRepository _urlMappingRepository;
+    private const int MaxGenerationAttempts = 5;
+
+    private readonly IUrlMappingRepository _repository;
     private readonly IShortCodeGenerator _shortCodeGenerator;
-    private readonly IValidator<CreateShortUrlRequest> _validator;
 
     public CreateShortUrlHandler(
-        IUrlMappingRepository urlMappingRepository,
-        IShortCodeGenerator shortCodeGenerator,
-        IValidator<CreateShortUrlRequest> validator)
+        IUrlMappingRepository repository,
+        IShortCodeGenerator shortCodeGenerator)
     {
-        _urlMappingRepository = urlMappingRepository;
+        _repository = repository;
         _shortCodeGenerator = shortCodeGenerator;
-        _validator = validator;
     }
 
-    public async Task<CreateShortUrlResult> HandleAsync(
-        CreateShortUrlRequest request,
+    public async Task<CreateShortUrlResponse> Handle(
+        CreateShortUrlCommand request,
         CancellationToken cancellationToken)
     {
-        await _validator.ValidateAndThrowAsync(
-            request,
-            cancellationToken);
-
-        var shortCode = _shortCodeGenerator.Generate();
-
-        while (await _urlMappingRepository.ExistsByShortCodeAsync(
-            shortCode,
-            cancellationToken))
+        for (int attempt = 1; attempt <= MaxGenerationAttempts; attempt++)
         {
-            shortCode = _shortCodeGenerator.Generate();
+            var shortCode = _shortCodeGenerator.Generate();
+
+            var exists = await _repository.ExistsByShortCodeAsync(
+                shortCode,
+                cancellationToken);
+
+            if (exists)
+            {
+                continue;
+            }
+
+            var urlMapping = UrlMapping.Create(
+                request.OriginalUrl,
+                shortCode);
+
+            await _repository.AddAsync(
+                urlMapping,
+                cancellationToken);
+
+            await _repository.SaveChangesAsync(
+                cancellationToken);
+
+            return new CreateShortUrlResponse(
+                urlMapping.Id,
+                urlMapping.OriginalUrl,
+                urlMapping.ShortCode);
         }
 
-        var urlMapping = UrlMapping.Create(
-            shortCode,
-            request.OriginalUrl);
-
-        await _urlMappingRepository.AddAsync(
-            urlMapping,
-            cancellationToken);
-
-        return new CreateShortUrlResult(
-            urlMapping.ShortCode,
-            $"https://short.ly/{urlMapping.ShortCode}");
+        throw new InvalidOperationException(
+            "Unable to generate a unique short code after multiple attempts.");
     }
 }

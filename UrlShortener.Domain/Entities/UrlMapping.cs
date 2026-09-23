@@ -1,70 +1,39 @@
-using UrlShortener.Domain.ValueObjects;
-
-namespace UrlShortener.Domain.Entities;
+namespace ShortUrl.Domain.Entities;
 
 public sealed class UrlMapping
 {
+    private UrlMapping()
+    {
+    }
+
     public Guid Id { get; private set; }
 
-    public OriginalUrl OriginalUrl { get; private set; }
+    public string OriginalUrl { get; private set; } = null!;
 
-    public ShortCode ShortCode { get; private set; }
+    public string ShortCode { get; private set; } = null!;
 
     public DateTime CreatedAtUtc { get; private set; }
 
-    public DateTime? ExpiresAtUtc { get; private set; }
-
-    public bool IsActive { get; private set; }
-
-    private UrlMapping(
-        Guid id,
-        OriginalUrl originalUrl,
-        ShortCode shortCode,
-        DateTime createdAtUtc,
-        DateTime? expiresAtUtc)
-    {
-        Id = id;
-        OriginalUrl = originalUrl;
-        ShortCode = shortCode;
-        CreatedAtUtc = createdAtUtc;
-        ExpiresAtUtc = expiresAtUtc;
-        IsActive = true;
-    }
-
     public static UrlMapping Create(
-        OriginalUrl originalUrl,
-        ShortCode shortCode,
-        DateTime? expiresAtUtc = null)
+        string originalUrl,
+        string shortCode)
     {
-        ArgumentNullException.ThrowIfNull(originalUrl);
-        ArgumentNullException.ThrowIfNull(shortCode);
-
-        var createdAtUtc = DateTime.UtcNow;
-
-        if (expiresAtUtc.HasValue &&
-            expiresAtUtc.Value <= createdAtUtc)
-        {
+        if (string.IsNullOrWhiteSpace(originalUrl))
             throw new ArgumentException(
-                "Expiration time must be in the future.",
-                nameof(expiresAtUtc));
-        }
+                "Original URL cannot be empty.",
+                nameof(originalUrl));
 
-        return new UrlMapping(
-            Guid.NewGuid(),
-            originalUrl,
-            shortCode,
-            createdAtUtc,
-            expiresAtUtc);
-    }
+        if (string.IsNullOrWhiteSpace(shortCode))
+            throw new ArgumentException(
+                "Short code cannot be empty.",
+                nameof(shortCode));
 
-    public bool IsExpired(DateTime utcNow)
-    {
-        return ExpiresAtUtc.HasValue &&
-               ExpiresAtUtc.Value <= utcNow;
-    }
-
-    public void Deactivate()
-    {
-        IsActive = false;
+        return new UrlMapping
+        {
+            Id = Guid.NewGuid(),
+            OriginalUrl = originalUrl,
+            ShortCode = shortCode,
+            CreatedAtUtc = DateTime.UtcNow
+        };
     }
 }
