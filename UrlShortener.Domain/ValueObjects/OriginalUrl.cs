@@ -43,4 +43,8 @@ public sealed class OriginalUrl
     {
         return Value;
     }
+
+    public override bool Equals(object? obj) => obj is OriginalUrl other && Value == other.Value;
+
+    public override int GetHashCode() => StringComparer.Ordinal.GetHashCode(Value);
 }

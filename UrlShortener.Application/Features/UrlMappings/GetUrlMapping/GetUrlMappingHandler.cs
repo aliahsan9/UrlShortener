@@ -1,7 +1,7 @@
 using MediatR;
-using ShortUrl.Application.Common.Interfaces;
+using UrlShortener.Application.Common.Interfaces;
 
-namespace ShortUrl.Application.Features.UrlMappings.GetUrlMapping;
+namespace UrlShortener.Application.Features.UrlMappings.GetUrlMapping;
 
 public sealed class GetUrlMappingHandler
     : IRequestHandler<
@@ -24,12 +24,12 @@ public sealed class GetUrlMappingHandler
             request.ShortCode,
             cancellationToken);
 
-        if (mapping is null)
+        if (mapping is null || !mapping.IsActive || mapping.IsExpired(DateTime.UtcNow))
             return null;
 
         return new GetUrlMappingResponse(
             mapping.Id,
-            mapping.OriginalUrl,
-            mapping.ShortCode);
+            mapping.OriginalUrl.Value,
+            mapping.ShortCode.Value);
     }
 }

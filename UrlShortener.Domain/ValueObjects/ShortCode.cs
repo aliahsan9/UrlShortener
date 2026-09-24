@@ -42,8 +42,26 @@ public sealed class ShortCode
         return new ShortCode(value);
     }
 
+    public static bool TryCreate(string? value, out ShortCode? shortCode)
+    {
+        if (string.IsNullOrWhiteSpace(value) ||
+            value.Length != RequiredLength ||
+            value.Any(character => !AllowedCharacters.Contains(character)))
+        {
+            shortCode = null;
+            return false;
+        }
+
+        shortCode = new ShortCode(value);
+        return true;
+    }
+
     public override string ToString()
     {
         return Value;
     }
+
+    public override bool Equals(object? obj) => obj is ShortCode other && Value == other.Value;
+
+    public override int GetHashCode() => StringComparer.Ordinal.GetHashCode(Value);
 }

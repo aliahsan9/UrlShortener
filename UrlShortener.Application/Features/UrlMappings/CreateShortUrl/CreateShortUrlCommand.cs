@@ -1,6 +1,6 @@
 using MediatR;
 
-namespace ShortUrl.Application.Features.UrlMappings.CreateShortUrl;
+namespace UrlShortener.Application.Features.UrlMappings.CreateShortUrl;
 
 public sealed record CreateShortUrlCommand(
     string OriginalUrl

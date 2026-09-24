@@ -1,4 +1,4 @@
-namespace ShortUrl.Application.Features.UrlMappings.GetUrlMapping;
+namespace UrlShortener.Application.Features.UrlMappings.GetUrlMapping;
 
 public sealed record GetUrlMappingResponse(
     Guid Id,

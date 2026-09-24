@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
-using ShortUrl.Application.Common.Interfaces;
+using UrlShortener.Application.Common.Interfaces;
 
-namespace ShortUrl.Infrastructure.Services;
+namespace UrlShortener.Infrastructure.Services;
 
 public sealed class RandomShortCodeGenerator : IShortCodeGenerator
 {
@@ -10,7 +10,7 @@ public sealed class RandomShortCodeGenerator : IShortCodeGenerator
         "ABCDEFGHIJKLMNOPQRSTUVWXYZ" +
         "0123456789";
 
-    private const int CodeLength = 7;
+    private const int CodeLength = 6;
 
     public string Generate()
     {

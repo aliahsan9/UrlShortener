@@ -1,4 +1,4 @@
-namespace ShortUrl.Application.Common.Interfaces;
+namespace UrlShortener.Application.Common.Interfaces;
 
 public interface IShortCodeGenerator
 {

@@ -1,6 +1,16 @@
 @UrlShortener.Api_HostAddress = http://localhost:5154
+@shortCode = replace-me
 
-GET {{UrlShortener.Api_HostAddress}}/weatherforecast/
-Accept: application/json
+POST {{UrlShortener.Api_HostAddress}}/api/urls/
+Content-Type: application/json
+
+{
+  "originalUrl": "https://example.com"
+}
+
+### Replace the sample code with the value returned by the POST above.
+
+GET {{UrlShortener.Api_HostAddress}}/api/urls/{{shortCode}}
+Accept: */*
 
 ###

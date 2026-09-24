@@ -1,8 +1,9 @@
 using Microsoft.EntityFrameworkCore;
-using ShortUrl.Application.Common.Interfaces;
-using ShortUrl.Domain.Entities;
+using UrlShortener.Application.Common.Interfaces;
+using UrlShortener.Domain.Entities;
+using UrlShortener.Domain.ValueObjects;
 
-namespace ShortUrl.Infrastructure.Persistence.Repositories;
+namespace UrlShortener.Infrastructure.Persistence.Repositories;
 
 public sealed class UrlMappingRepository : IUrlMappingRepository
 {
@@ -17,10 +18,13 @@ public sealed class UrlMappingRepository : IUrlMappingRepository
         string shortCode,
         CancellationToken cancellationToken = default)
     {
+        if (!ShortCode.TryCreate(shortCode, out var parsedShortCode))
+            return false;
+
         return await _context.UrlMappings
             .AsNoTracking()
             .AnyAsync(
-                x => x.ShortCode == shortCode,
+                x => x.ShortCode == parsedShortCode!,
                 cancellationToken);
     }
 
@@ -37,9 +41,12 @@ public sealed class UrlMappingRepository : IUrlMappingRepository
         string shortCode,
         CancellationToken cancellationToken = default)
     {
+        if (!ShortCode.TryCreate(shortCode, out var parsedShortCode))
+            return null;
+
         return await _context.UrlMappings
             .FirstOrDefaultAsync(
-                x => x.ShortCode == shortCode,
+                x => x.ShortCode == parsedShortCode!,
                 cancellationToken);
     }
 

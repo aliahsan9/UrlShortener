@@ -1,9 +1,9 @@
 using MediatR;
-using ShortUrl.Application.Common.Interfaces;
-using ShortUrl.Domain.Entities;
+using UrlShortener.Application.Common.Interfaces;
 using UrlShortener.Domain.Entities;
+using UrlShortener.Domain.ValueObjects;
 
-namespace ShortUrl.Application.Features.UrlMappings.CreateShortUrl;
+namespace UrlShortener.Application.Features.UrlMappings.CreateShortUrl;
 
 public sealed class CreateShortUrlHandler
     : IRequestHandler<CreateShortUrlCommand, CreateShortUrlResponse>
@@ -39,8 +39,8 @@ public sealed class CreateShortUrlHandler
             }
 
             var urlMapping = UrlMapping.Create(
-                request.OriginalUrl,
-                shortCode);
+                OriginalUrl.Create(request.OriginalUrl),
+                ShortCode.Create(shortCode));
 
             await _repository.AddAsync(
                 urlMapping,
@@ -51,8 +51,8 @@ public sealed class CreateShortUrlHandler
 
             return new CreateShortUrlResponse(
                 urlMapping.Id,
-                urlMapping.OriginalUrl,
-                urlMapping.ShortCode);
+                urlMapping.OriginalUrl.Value,
+                urlMapping.ShortCode.Value);
         }
 
         throw new InvalidOperationException(

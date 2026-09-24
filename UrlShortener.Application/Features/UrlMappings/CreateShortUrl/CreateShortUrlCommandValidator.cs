@@ -1,6 +1,5 @@
 using FluentValidation;
-
-namespace ShortUrl.Application.Features.UrlMappings.CreateShortUrl;
+namespace UrlShortener.Application.Features.UrlMappings.CreateShortUrl;
 
 public sealed class CreateShortUrlCommandValidator
     : AbstractValidator<CreateShortUrlCommand>
